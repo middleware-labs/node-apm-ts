@@ -1,6 +1,6 @@
 {
-  "name": "@middleware.io/node-apm-ts",
-  "version": "1.0.0",
+  "name": "node-apm-ts",
+  "version": "1.0.2",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
@@ -38,7 +38,11 @@
     "winston": "^3.8.1"
   },
   "gypfile": true,
-   "bugs": {
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/middleware-labs/node-apm-ts.git"
+  },
+  "bugs": {
     "url": "https://github.com/middleware-labs/node-apm-ts/issues"
   },
   "homepage": "https://github.com/middleware-labs/node-apm-ts#readme",
