@@ -38,11 +38,7 @@
     "winston": "^3.8.1"
   },
   "gypfile": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/middleware-labs/node-apm-ts.git"
-  },
-  "bugs": {
+   "bugs": {
     "url": "https://github.com/middleware-labs/node-apm-ts/issues"
   },
   "homepage": "https://github.com/middleware-labs/node-apm-ts#readme",
