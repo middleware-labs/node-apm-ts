@@ -24,6 +24,7 @@ export const init = (config: Config) => {
                 url: config.hostUrl,
             }),
             instrumentations: [
+                // @ts-ignore
                 getNodeAutoInstrumentations(),
                 new GrpcInstrumentation({
                     ignoreGrpcMethods: ['Export'],
