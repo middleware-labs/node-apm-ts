@@ -1,0 +1,50 @@
+{
+  "name": "@middleware.io/node-apm-ts",
+  "version": "1.1.26",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "scripts": {
+    "clean": "rimraf build/*",
+    "prepare": "tsc -p .",
+    "watch": "tsc -w"
+  },
+  "exports": {
+    ".": "./build/src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.7",
+    "@opentelemetry/api": "^1.4.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.28.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.35.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.27.0",
+    "@opentelemetry/instrumentation-grpc": "^0.32.0",
+    "@opentelemetry/propagator-b3": "^1.1.1",
+    "@opentelemetry/resources": "^1.2.0",
+    "@opentelemetry/sdk-metrics": "^1.9.0",
+    "@opentelemetry/sdk-node": "^0.35.0",
+    "@opentelemetry/sdk-trace-base": "^1.0.1",
+    "@opentelemetry/sdk-trace-node": "^1.0.1",
+    "@opentelemetry/semantic-conventions": "^1.2.0",
+    "fluent-logger": "^3.4.1",
+    "logform": "^2.4.2",
+    "nan": "^2.15.0",
+    "node-addon-api": "^4.3.0",
+    "node-fetch": "^2.6.0",
+    "node-gyp": "^9.0.0",
+    "process": "^0.11.10",
+    "typescript": "^5.1.3",
+    "winston": "^3.8.1"
+  },
+  "gypfile": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/middleware-labs/node-apm-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/middleware-labs/node-apm-ts/issues"
+  },
+  "homepage": "https://github.com/middleware-labs/node-apm-ts#readme",
+  "description": ""
+}
