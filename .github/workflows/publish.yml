@@ -17,10 +17,10 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --frozen-lockfile
 
-      - name: tsc
-        run: cd src && npm run compile
+      - name: Create pack
+        run: yarn pack --filename=package.tgz
 
       - name: publish
         run: npm publish --access public
