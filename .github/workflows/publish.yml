@@ -20,7 +20,7 @@ jobs:
         run: npm install
 
       - name: tsc
-        uses: npm run compile
+        run: npm run compile
 
       - name: publish
         run: npm publish --access public
