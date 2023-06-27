@@ -7,7 +7,7 @@
     "clean": "rimraf build/*",
     "build": "tsc",
     "watch": "tsc -w",
-    "prepack": "npx run build"
+    "prepack": "yarn build"
 
   },
   "exports": {
