@@ -16,11 +16,9 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org
 
-      - name: Install dependencies
-        run: npm install
 
       - name: Create pack
-        run: yarn pack --filename=package.tgz
+        run: yarn build
 
       - name: publish
         run: npm publish --access public
