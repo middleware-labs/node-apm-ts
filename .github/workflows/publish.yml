@@ -15,11 +15,12 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org
+
       - name: Install dependencies
         run: npm install
 
-      - name: Run TypeScript compiler
-        run: npx tsc
+      - name: tsc
+        uses: npm run compile
 
       - name: publish
         run: npm publish --access public
