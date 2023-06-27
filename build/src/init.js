@@ -22,45 +22,64 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setAttribute = exports.errorRecord = exports.debug = exports.warn = exports.info = exports.error = exports.track = void 0;
+exports.debug = exports.warn = exports.info = exports.error = exports.setAttribute = exports.errorRecord = exports.track = void 0;
 const logform_1 = require("logform");
 const api_1 = __importStar(require("@opentelemetry/api"));
 const config_1 = require("./config");
-const winston_1 = __importDefault(require("winston"));
-const fluent_logger_1 = __importDefault(require("fluent-logger"));
 const { errors } = logform_1.format;
 const errorsFormat = errors({ stack: true });
 const transformError = errorsFormat.transform;
-const fluent = fluent_logger_1.default.support.winstonTransport();
-const logger = winston_1.default.createLogger({
-    transports: [
-        fluent,
-        new winston_1.default.transports.Console({ level: 'debug' })
-    ]
-});
-// @ts-ignore
-logger.on('flush', () => { });
-// @ts-ignore
-logger.on('finish', () => {
-    fluent.sender.end('end', {}, () => { });
-});
 let config;
+const winston = require('winston');
+let c = {
+    host: 'localhost',
+    port: '8006',
+    timeout: 3.0,
+    requireAckResponse: true
+};
+const fluentTransport = require('fluent-logger').support.winstonTransport();
+let fluent = new fluentTransport('default-project', c);
+let logger = winston.createLogger({
+    transports: [fluent, new (winston.transports.Console)({ level: 'debug' })]
+});
+logger.on('flush', () => { });
+logger.on('finish', () => {
+    fluent.sender.end("end", {}, () => { });
+});
 const track = (newConfig = {}) => {
     config = (0, config_1.init)(newConfig);
+    let c = {
+        host: config.host,
+        port: config.port.fluent,
+        timeout: 3.0,
+        requireAckResponse: true
+    };
+    fluent = new fluentTransport(config.projectName, c);
+    logger = winston.createLogger({
+        transports: [fluent, new (winston.transports.Console)({ level: 'debug' })]
+    });
 };
 exports.track = track;
-const error = (message) => {
-    const stack = transformError({ message, level: "error" }, { stack: true });
-    logger.error({
-        message,
-        stack,
-        'project.name': config.projectName,
-        'service.name': config.serviceName,
-    });
+const errorRecord = (e) => {
+    const span = api_1.default.trace.getSpan(api_1.default.context.active());
+    if (span) {
+        span.recordException(e);
+        span.setStatus({ code: api_1.SpanStatusCode.ERROR, message: String(e) });
+    }
+};
+exports.errorRecord = errorRecord;
+const setAttribute = (name, value) => {
+    const span = api_1.default.trace.getSpan(api_1.default.context.active());
+    if (span) {
+        span.setAttribute(name, value);
+    }
+};
+exports.setAttribute = setAttribute;
+const error = (error) => {
+    const stack = transformError({ message: error, level: "error" }, { stack: true });
+    let message = typeof stack == "string" ? stack : error.message;
+    logger.error({ message, stack, "project.name": config.projectName, "service.name": config.serviceName });
 };
 exports.error = error;
 const info = (message) => {
@@ -87,21 +106,6 @@ const debug = (message) => {
     });
 };
 exports.debug = debug;
-const errorRecord = (e) => {
-    const span = api_1.default.trace.getSpan(api_1.default.context.active());
-    if (span) {
-        span.recordException(e);
-        span.setStatus({ code: api_1.SpanStatusCode.ERROR, message: String(e) });
-    }
-};
-exports.errorRecord = errorRecord;
-const setAttribute = (name, value) => {
-    const span = api_1.default.trace.getSpan(api_1.default.context.active());
-    if (span) {
-        span.setAttribute(name, value);
-    }
-};
-exports.setAttribute = setAttribute;
 class init {
 }
 exports.default = init;

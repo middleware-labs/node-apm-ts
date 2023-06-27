@@ -8,8 +8,8 @@ const process_1 = require("process");
 exports.configDefault = {
     DEBUG: api_1.DiagLogLevel.NONE,
     host: 'localhost',
-    projectName: `Project-${process_1.process.pid}`,
-    serviceName: `Service-${process_1.process.pid}`,
+    projectName: `Project-${process_1.pid}`,
+    serviceName: `Service-${process_1.pid}`,
     port: {
         grpc: 9319,
         fluent: 8006,
@@ -22,10 +22,11 @@ const init = (config = {}) => {
         // @ts-ignore
         exports.configDefault[key] = config[key] ? config[key] : exports.configDefault[key];
     });
-    const isHostExist = process_1.process.env.MW_AGENT_SERVICE && process_1.process.env.MW_AGENT_SERVICE !== '';
+    const isHostExist = process_1.env['MW_AGENT_SERVICE'] && process_1.env['MW_AGENT_SERVICE'] !== '';
     if (isHostExist) {
-        exports.configDefault.host = process_1.process.env.MW_AGENT_SERVICE;
-        exports.configDefault.hostUrl = `${process_1.process.env.MW_AGENT_SERVICE}:${exports.configDefault.port.grpc}`;
+        // @ts-ignore
+        exports.configDefault.host = process_1.env['MW_AGENT_SERVICE'];
+        exports.configDefault.hostUrl = `${process_1.env['MW_AGENT_SERVICE']}:${exports.configDefault.port.grpc}`;
     }
     api_1.diag.setLogger(new api_1.DiagConsoleLogger(), exports.configDefault.DEBUG ? api_1.DiagLogLevel.DEBUG : api_1.DiagLogLevel.NONE);
     (0, tracer_collector_1.init)(exports.configDefault);

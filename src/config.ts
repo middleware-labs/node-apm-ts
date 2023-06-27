@@ -2,7 +2,7 @@ import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { init as initTracer } from './tracer-collector';
 
 // @ts-ignore
-import { process } from 'process';
+import { pid ,env} from 'process';
 
 export interface Config {
     DEBUG: DiagLogLevel;
@@ -20,8 +20,8 @@ export interface Config {
 export const configDefault: Config = {
     DEBUG: DiagLogLevel.NONE,
     host: 'localhost',
-    projectName: `Project-${process.pid}`,
-    serviceName: `Service-${process.pid}`,
+    projectName: `Project-${pid}`,
+    serviceName: `Service-${pid}`,
     port: {
         grpc: 9319,
         fluent: 8006,
@@ -36,10 +36,11 @@ export const init = (config: Partial<Config> = {}): Config => {
         configDefault[key] = config[key] ? config[key] : configDefault[key];
     });
 
-    const isHostExist = process.env.MW_AGENT_SERVICE && process.env.MW_AGENT_SERVICE !== '';
+    const isHostExist = env['MW_AGENT_SERVICE'] && env['MW_AGENT_SERVICE'] !== '';
     if (isHostExist) {
-        configDefault.host = process.env.MW_AGENT_SERVICE;
-        configDefault.hostUrl = `${process.env.MW_AGENT_SERVICE}:${configDefault.port.grpc}`;
+        // @ts-ignore
+        configDefault.host = env['MW_AGENT_SERVICE'];
+        configDefault.hostUrl = `${env['MW_AGENT_SERVICE']}:${configDefault.port.grpc}`;
     }
 
     diag.setLogger(new DiagConsoleLogger(), configDefault.DEBUG ? DiagLogLevel.DEBUG : DiagLogLevel.NONE);
