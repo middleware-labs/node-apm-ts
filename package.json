@@ -5,8 +5,10 @@
   "types": "build/src/index.d.ts",
   "scripts": {
     "clean": "rimraf build/*",
-    "compile": "tsc",
-    "watch": "tsc -w"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prepack": "npx run build"
+
   },
   "exports": {
     ".": "./build/src/index.js"
