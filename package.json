@@ -5,7 +5,7 @@
   "types": "build/src/index.d.ts",
   "scripts": {
     "clean": "rimraf build/*",
-    "compile": "tsc -p .",
+    "compile": "tsc",
     "watch": "tsc -w"
   },
   "exports": {
