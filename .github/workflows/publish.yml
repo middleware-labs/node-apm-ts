@@ -17,8 +17,6 @@ jobs:
           registry-url: https://registry.npmjs.org
 
 
-      - name: Create pack
-        run: yarn build
 
       - name: publish
         run: npm publish --access public
