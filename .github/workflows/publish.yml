@@ -20,8 +20,7 @@ jobs:
 
       - name: Run TypeScript compiler
         run: npx tsc
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+
       - name: publish
         run: npm publish --access public
         env:
