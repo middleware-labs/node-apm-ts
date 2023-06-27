@@ -6,8 +6,7 @@
   "scripts": {
     "clean": "rimraf build/*",
     "build": "tsc",
-    "watch": "tsc -w",
-    "prepack": "yarn build"
+    "watch": "tsc -w"
 
   },
   "exports": {
