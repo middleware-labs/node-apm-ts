@@ -1,11 +1,11 @@
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
-import { init as initTracer } from './tracer-collector';
-
-// @ts-ignore
-import { pid ,env} from 'process';
+import process from 'process';
+import {init as tracerInit} from './tracer-collector';
 
 export interface Config {
-    DEBUG: DiagLogLevel;
+    pauseMetrics: Boolean;
+    pauseTraces: Boolean;
+    DEBUG: Boolean;
     host: string;
     projectName: string;
     serviceName: string;
@@ -13,39 +13,57 @@ export interface Config {
         grpc: number;
         fluent: number;
     };
-    hostUrl: string;
+    target: string;
     collectMetrics: boolean;
+    profilingServerUrl: string;
+    enableProfiling: boolean;
+    accessToken: string;
+    tenantID: string;
+    mwAuthURL: string;
+    consoleLog: boolean;
+    consoleError:boolean
 }
 
-export const configDefault: Config = {
-    DEBUG: DiagLogLevel.NONE,
+const configDefault: Config = {
+    DEBUG: false,
     host: 'localhost',
-    projectName: `Project-${pid}`,
-    serviceName: `Service-${pid}`,
+    projectName: 'Project-' + process.pid,
+    serviceName: 'Service-' + process.pid,
     port: {
         grpc: 9319,
         fluent: 8006,
     },
-    hostUrl: 'http://localhost:9319',
+    target: 'http://localhost:9319',
     collectMetrics: false,
+    profilingServerUrl: 'https://profiling.middleware.io',
+    enableProfiling: true,
+    accessToken: '',
+    tenantID: '',
+    mwAuthURL: 'https://app.middleware.io/api/v1/auth',
+    consoleLog: false,
+    consoleError:true,
+    pauseTraces:false,
+    pauseMetrics:true
 };
 
 export const init = (config: Partial<Config> = {}): Config => {
     Object.keys(configDefault).forEach((key) => {
         // @ts-ignore
-        configDefault[key] = config[key] ? config[key] : configDefault[key];
+        configDefault[key] = config[key] ?? configDefault[key];
     });
 
-    const isHostExist = env['MW_AGENT_SERVICE'] && env['MW_AGENT_SERVICE'] !== '';
+    const isHostExist =
+        process.env.MW_AGENT_SERVICE && process.env.MW_AGENT_SERVICE !== '' ? true : false;
+
     if (isHostExist) {
         // @ts-ignore
-        configDefault.host = env['MW_AGENT_SERVICE'];
-        configDefault.hostUrl = `${env['MW_AGENT_SERVICE']}:${configDefault.port.grpc}`;
+        configDefault.host = process.env.MW_AGENT_SERVICE;
+        configDefault.target = process.env.MW_AGENT_SERVICE + ':' + configDefault.port.grpc;
     }
 
     diag.setLogger(new DiagConsoleLogger(), configDefault.DEBUG ? DiagLogLevel.DEBUG : DiagLogLevel.NONE);
 
-    initTracer(configDefault);
+    tracerInit(configDefault);
 
-    return configDefault;
+    return <Config>configDefault;
 };

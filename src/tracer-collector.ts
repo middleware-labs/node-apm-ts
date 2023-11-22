@@ -1,42 +1,48 @@
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { Resource } from '@opentelemetry/resources';
-import { GrpcInstrumentation } from '@opentelemetry/instrumentation-grpc';
+const opentelemetry = require('@opentelemetry/sdk-node');
+const {getNodeAutoInstrumentations} = require('@opentelemetry/auto-instrumentations-node');
+const {OTLPTraceExporter} = require('@opentelemetry/exporter-trace-otlp-grpc');
+const { GrpcInstrumentation } = require('@opentelemetry/instrumentation-grpc');
+const {Resource} = require("@opentelemetry/resources");
+const {SemanticResourceAttributes} = require("@opentelemetry/semantic-conventions");
+const api = require('@opentelemetry/api');
+const { CompositePropagator } = require('@opentelemetry/core');
+const { B3Propagator, B3InjectEncoding } = require('@opentelemetry/propagator-b3');
+import {Config} from './config';
 
-export interface Config {
-    pauseTraces?: number;
-    hostUrl: string;
-    serviceName: string;
-    projectName: string;
-}
-
+// Set the global propagator
+api.propagation.setGlobalPropagator(
+    new CompositePropagator({
+        propagators: [
+            new B3Propagator(),
+            new B3Propagator({ injectEncoding: B3InjectEncoding.MULTI_HEADER }),
+        ],
+    })
+);
 export const init = (config: Config) => {
-    const apm_pause_traces = config.pauseTraces && config.pauseTraces === 1 ? true : false;
+    const apm_pause_traces = config.pauseTraces === true;
 
     if (!apm_pause_traces) {
-
-        const sdk = new NodeSDK({
+        const sdk = new opentelemetry.NodeSDK({
             traceExporter: new OTLPTraceExporter({
-                url: config.hostUrl,
+                url: config.target,
             }),
             instrumentations: [
-                getNodeAutoInstrumentations(),
+                getNodeAutoInstrumentations({}),
                 new GrpcInstrumentation({
                     ignoreGrpcMethods: ['Export'],
                 }),
-            ]
+            ],
         });
+
         sdk.addResource(
             new Resource({
                 [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
                 ['mw_agent']: true,
                 ['project.name']: config.projectName,
+                ['mw.account_key']: config.accessToken,
             })
         );
 
-        sdk
-            .start()
+        sdk.start();
     }
 };
