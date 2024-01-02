@@ -1,9 +1,10 @@
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import process from 'process';
 import {init as tracerInit} from './tracer-collector';
+import {init as metricInit} from './metrics-collector';
 
 export interface Config {
-    pauseMetrics: Boolean;
+    pauseMetrics: Boolean | number;
     pauseTraces: Boolean;
     DEBUG: Boolean;
     host: string;
@@ -21,10 +22,11 @@ export interface Config {
     tenantID: string;
     mwAuthURL: string;
     consoleLog: boolean;
-    consoleError:boolean
+    consoleError:boolean;
+    meterProvider:any
 }
 
-const configDefault: Config = {
+export let configDefault: Config = {
     DEBUG: false,
     host: 'localhost',
     projectName: 'Project-' + process.pid,
@@ -43,7 +45,8 @@ const configDefault: Config = {
     consoleLog: false,
     consoleError:true,
     pauseTraces:false,
-    pauseMetrics:true
+    pauseMetrics:true,
+    meterProvider:false,
 };
 
 export const init = (config: Partial<Config> = {}): Config => {
@@ -62,6 +65,8 @@ export const init = (config: Partial<Config> = {}): Config => {
     }
 
     diag.setLogger(new DiagConsoleLogger(), configDefault.DEBUG ? DiagLogLevel.DEBUG : DiagLogLevel.NONE);
+
+    metricInit(configDefault)
 
     tracerInit(configDefault);
 

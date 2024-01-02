@@ -2,7 +2,7 @@ const otel = require('@opentelemetry/api')
 import { loggerInitializer, log } from './logger';
 import { init as configInit } from './config';
 import { init as profilerInit } from './profiler';
-import {Config} from './config';
+import {Config,configDefault} from './config';
 
 export const track = (newConfig: Partial<Config> | undefined = {}): void => {
     const config = configInit(newConfig);
@@ -44,3 +44,13 @@ export const setAttribute = (name: string, value: any): void => {
         }
     }
 };
+
+module.exports.getMeter =() => {
+    if (configDefault.meterProvider){
+        return configDefault.meterProvider.getMeter(configDefault.serviceName)
+    }
+    return false
+}
+module.exports.getTracer =() => {
+    return otel.trace.getTracer(configDefault.serviceName)
+}

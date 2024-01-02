@@ -4,7 +4,9 @@ const { LoggerProvider, SimpleLogRecordProcessor } = require('@opentelemetry/sdk
 const {Resource} = require("@opentelemetry/resources");
 const {SemanticResourceAttributes} = require("@opentelemetry/semantic-conventions");
 const fs = require('fs');
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+//const path = require('path');
+//const packageJsonPath = path.resolve(__dirname, 'package.json');
+//const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 const { format } = require('logform');
 const { errors } = format;
 const errorsFormat = errors({ stack: true })
@@ -17,7 +19,7 @@ const log = (level: string, message: string, attributes: Record<string, any> = {
         message = typeof stack === "string" ? stack : stack.message;
         attributes['stack'] = stack && stack.stack ? stack.stack : "";
     }
-    const logger = logs.getLogger(packageJson.name, packageJson.version);
+    const logger = logs.getLogger('deno-ts', '1.0.2');
     const severityNumber = SeverityNumber[level]
     logger.emit({
         severityNumber,
