@@ -1,6 +1,6 @@
 {
   "name": "mw-node-apm-ts",
-  "version": "1.0.32",
+  "version": "1.0.35",
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
   "scripts": {
