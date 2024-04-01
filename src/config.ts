@@ -2,11 +2,12 @@ import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import process from 'process';
 import {init as tracerInit} from './tracer-collector';
 import {init as metricInit} from './metrics-collector';
+import { loggerInitializer } from './logger';
 
 export interface Config {
     pauseMetrics: Boolean | number;
-    pauseTraces: Boolean;
-    DEBUG: Boolean;
+    pauseTraces: Boolean | number;
+    DEBUG: Boolean  | number;
     host: string;
     projectName: string;
     serviceName: string;
@@ -23,7 +24,8 @@ export interface Config {
     mwAuthURL: string;
     consoleLog: boolean;
     consoleError:boolean;
-    meterProvider:any
+    meterProvider:any,
+    isServerless:boolean
 }
 
 export let configDefault: Config = {
@@ -47,28 +49,25 @@ export let configDefault: Config = {
     pauseTraces:false,
     pauseMetrics:true,
     meterProvider:false,
+    isServerless:false,
 };
 
 export const init = (config: Partial<Config> = {}): Config => {
+    if (config.hasOwnProperty('target')) {configDefault["isServerless"] = true}
     Object.keys(configDefault).forEach((key) => {
         // @ts-ignore
         configDefault[key] = config[key] ?? configDefault[key];
     });
-
     const isHostExist =
         process.env.MW_AGENT_SERVICE && process.env.MW_AGENT_SERVICE !== '' ? true : false;
-
     if (isHostExist) {
         // @ts-ignore
-        configDefault.host = process.env.MW_AGENT_SERVICE;
-        configDefault.target = process.env.MW_AGENT_SERVICE + ':' + configDefault.port.grpc;
+        configDefault.host =  'http://' + process.env.MW_AGENT_SERVICE;
+        configDefault.target =  'http://' + process.env.MW_AGENT_SERVICE + ':' + configDefault.port.grpc;
     }
-
     diag.setLogger(new DiagConsoleLogger(), configDefault.DEBUG ? DiagLogLevel.DEBUG : DiagLogLevel.NONE);
-
     metricInit(configDefault)
-
     tracerInit(configDefault);
-
+    loggerInitializer(configDefault)
     return <Config>configDefault;
 };
