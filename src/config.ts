@@ -16,7 +16,6 @@ export interface Config {
         fluent: number;
     };
     target: string;
-    collectMetrics: boolean;
     profilingServerUrl: string;
     enableProfiling: boolean;
     accessToken: string;
@@ -38,7 +37,6 @@ export let configDefault: Config = {
         fluent: 8006,
     },
     target: 'http://localhost:9319',
-    collectMetrics: false,
     profilingServerUrl: 'https://profiling.middleware.io',
     enableProfiling: true,
     accessToken: '',
@@ -47,7 +45,7 @@ export let configDefault: Config = {
     consoleLog: false,
     consoleError:true,
     pauseTraces:false,
-    pauseMetrics:true,
+    pauseMetrics:false,
     meterProvider:false,
     isServerless:false,
 };
