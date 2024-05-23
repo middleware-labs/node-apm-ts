@@ -3,6 +3,7 @@ import process from 'process';
 import {init as tracerInit} from './tracer-collector';
 import {init as metricInit} from './metrics-collector';
 import { loggerInitializer } from './logger';
+import { ResourceAttributes } from '@opentelemetry/resources';
 
 export interface Config {
     pauseMetrics: Boolean | number;
@@ -24,8 +25,11 @@ export interface Config {
     consoleLog: boolean;
     consoleError:boolean;
     meterProvider:any,
-    isServerless:boolean
+    isServerless:boolean,
+    customResourceAttributes: ResourceAttributes
 }
+
+let customResourceAttributes: ResourceAttributes = {};
 
 export let configDefault: Config = {
     DEBUG: false,
@@ -48,6 +52,7 @@ export let configDefault: Config = {
     pauseMetrics:false,
     meterProvider:false,
     isServerless:false,
+    customResourceAttributes: customResourceAttributes,
 };
 
 export const init = (config: Partial<Config> = {}): Config => {
