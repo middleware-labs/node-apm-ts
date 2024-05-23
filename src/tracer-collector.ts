@@ -39,6 +39,7 @@ export const init = (config: Config) => {
                 ['project.name']: config.projectName,
                 ['mw.account_key']: config.accessToken,
                 ['mw_serverless']:config.isServerless ? 1 : 0,
+                ...config.customResourceAttributes
             })
         );
 

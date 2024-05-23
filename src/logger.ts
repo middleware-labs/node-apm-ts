@@ -41,6 +41,7 @@ export const loggerInitializer = (config: Config): void => {
             ['project.name']: config.projectName,
             ['mw.account_key']: config.accessToken,
             ['mw_serverless']:config.isServerless ? 1 : 0,
+            ...config.customResourceAttributes
         })
     });
 
