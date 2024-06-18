@@ -3,7 +3,7 @@ import { log } from './logger';
 import { init as configInit } from './config';
 import { init as profilerInit } from './profiler';
 import {Config,configDefault} from './config';
-
+import {Meter as IMeter, MeterOptions ,TracerOptions, Tracer} from '@opentelemetry/api';
 export const track = (newConfig: Partial<Config> | undefined = {}): void => {
     const config = configInit(newConfig);
     profilerInit(config).then(r => {});
@@ -44,12 +44,13 @@ export const setAttribute = (name: string, value: any): void => {
     }
 };
 
-export const getMeter =() => {
+export const getMeter = (name: string, version?: string, options?: MeterOptions): IMeter => {
     if (configDefault.meterProvider){
         return configDefault.meterProvider.getMeter(configDefault.serviceName)
     }
-    return false
+    return otel.meter.getMeter(configDefault.serviceName)
 }
-export const getTracer =() => {
+
+export const getTracer =(name: string, version?: string, options?: TracerOptions): Tracer => {
     return otel.trace.getTracer(configDefault.serviceName)
 }

@@ -22,7 +22,9 @@ export const init = async (config: Config): Promise<Config> => {
 
                     if (typeof account === 'string') {
                         const TenantID = account;
-
+                        
+                        config.profilingServerUrl = `https://${account}.middleware.io/profiling`
+                        
                         const profilingServerUrl = process.env.MW_PROFILING_SERVER_URL || config.profilingServerUrl;
 
                         Pyroscope.init({
