@@ -41,7 +41,7 @@ export let configDefault: Config = {
         fluent: 8006,
     },
     target: 'http://localhost:9319',
-    profilingServerUrl: 'https://profiling.middleware.io',
+    profilingServerUrl: '',
     enableProfiling: true,
     accessToken: '',
     tenantID: '',
